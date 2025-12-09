@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, MessageHandler, ContextTypes, filte
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 WELCOME_MESSAGE = (
-    "‼️💬 Benvenuto {first_name} nel gruppo Linea Lane!\n\n"
+    "‼️💬 Benvenuto/a {first_name} nel gruppo Linea Lane!\n\n"
     "📘 Codice di Condotta:\n"
     "<a href=\"https://telegra.ph/Reg-Community-08-29\">Regole della Community</a>\n\n"
     "⚪🔴 Partecipa con rispetto.\n"
@@ -50,3 +50,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
