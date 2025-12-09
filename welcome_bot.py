@@ -11,11 +11,20 @@ if not BOT_TOKEN:
 
 WELCOME_MESSAGE = (
     "‼️💬 Benvenuto/a {first_name} nel gruppo Linea Lane!\n\n"
+    
     "📘 Codice di Condotta:\n"
     "<a href=\"https://telegra.ph/Reg-Community-08-29\">Regole della Community</a>\n\n"
+    
+    "🌐 Social:\n"
+    "Instagram: <a href=\"https://www.instagram.com/linea_lane/\">https://www.instagram.com/linea_lane/</a>\n"
+    "Facebook: <a href=\"https://www.facebook.com/DirettaLineaLane\">https://www.facebook.com/DirettaLineaLane</a>\n"
+    "YouTube: <a href=\"https://www.youtube.com/@linealane\">https://www.youtube.com/@linealane</a>\n"
+    "TikTok: <a href=\"https://www.tiktok.com/@linea_lane\">https://www.tiktok.com/@linea_lane</a>\n\n"
+    
     "⚪🔴 Partecipa con rispetto.\n"
     "Ricorda che sei parte della nostra community!"
 )
+
 
 async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message is None:
