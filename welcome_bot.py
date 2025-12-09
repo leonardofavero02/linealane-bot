@@ -1,8 +1,13 @@
+# welcome_bot.py
 import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
 
-TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+if not BOT_TOKEN:
+    # non lanciare eccezione qui se vuoi che import non fallisca;
+    # ma è utile per debug locale
+    raise RuntimeError("BOT_TOKEN env var not set")
 
 WELCOME_MESSAGE = (
     "‼️💬 Benvenuto/a {first_name} nel gruppo Linea Lane!\n\n"
@@ -13,24 +18,26 @@ WELCOME_MESSAGE = (
 )
 
 async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.message is None:  # Messaggi strani / system
+    if update.message is None:
         return
 
-    user = update.message.from_user
-    if user is None:
-        return
-
-    # Solo quando qualcuno entra nel gruppo
     if update.message.new_chat_members:
         for member in update.message.new_chat_members:
-            await update.message.reply_html(
-                WELCOME_MESSAGE.format(first_name=member.first_name)
+            first = member.first_name or member.full_name or "amico/a"
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text=WELCOME_MESSAGE.format(first_name=first),
+                parse_mode="HTML",
+                disable_web_page_preview=True
             )
 
-def main():
-    app = ApplicationBuilder().token(TOKEN).build()
+def get_application():
+    """Return a built telegram.ext.Application ready to run_polling()."""
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome))
-    app.run_polling()
+    return app
 
-if __name__ == "__main__":
-    main()
+# Non eseguire run_polling quando il file viene importato.
+# Se vuoi testare in locale con python welcome_bot.py, puoi scommentare:
+# if __name__ == "__main__":
+#     get_application().run_polling()
