@@ -6,39 +6,45 @@ import sys
 from flask import Flask
 from telegram.ext import ApplicationBuilder, MessageHandler, filters
 
-# --- Config ---
-TOKEN = os.environ.get("TELEGRAM_TOKEN")
+# --- Config: accetta sia BOT_TOKEN che TELEGRAM_TOKEN ---
+TOKEN = os.environ.get("BOT_TOKEN") or os.environ.get("TELEGRAM_TOKEN")
 if not TOKEN:
-    print("ERROR: TELEGRAM_TOKEN env var not set")
+    print("ERROR: BOT_TOKEN or TELEGRAM_TOKEN not set")
     sys.exit(1)
 
-PORT = int(os.environ.get("PORT", 8080))  # Render sets PORT for web services
+PORT = int(os.environ.get("PORT", 8080))
 
-# --- Small web app (necessary per Render port scan) ---
+# --- Mini web server per Render ---
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return "OK - bot running"
+    return "Bot running"
 
-# --- Telegram bot handlers ---
+# --- Handler di debug: stampa i messaggi ---
 async def on_message(update, context):
-    text = update.message.text if update.message else "<no message>"
+    text = update.message.text if update.message else "<no text>"
     print("Received:", text)
 
 def run_bot():
     application = ApplicationBuilder().token(TOKEN).build()
+
+    # Logga TUTTI i messaggi (utile per verificare che funziona)
     application.add_handler(MessageHandler(filters.ALL, on_message))
+
     application.run_polling(stop_signals=None)
 
 def handle_exit(signum, frame):
-    print("Shutting down")
+    print("Shutting down...")
     sys.exit(0)
 
 signal.signal(signal.SIGTERM, handle_exit)
 signal.signal(signal.SIGINT, handle_exit)
 
 if __name__ == "__main__":
+    # Bot in background
     t = threading.Thread(target=run_bot, daemon=True)
     t.start()
+
+    # Server web richiesto da Render
     app.run(host="0.0.0.0", port=PORT)
