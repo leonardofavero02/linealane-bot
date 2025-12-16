@@ -127,7 +127,7 @@ async def taccagno_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # =====================
 
 def get_application():
-    app = ApplicationBuilder().token(BOT_TOKEN).job_queue().build()
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
     app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome))
     app.add_handler(MessageHandler(filters.ALL, capture_chat_and_admin), group=1)
