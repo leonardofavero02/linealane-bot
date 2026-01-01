@@ -306,13 +306,14 @@ def get_application():
     )
 
     app.job_queue.run_daily(
-        taccagno_daily,
-        time=time(
-            hour=random.randint(10, 21),
-            minute=random.randint(0, 59),
-            tzinfo=TIMEZONE
-        )
+    taccagno_daily,
+    time=time(
+        hour=random.randint(10, 21),
+        minute=random.randint(0, 59),
+        tzinfo=TIMEZONE
     )
+)
+
 
     app.job_queue.run_daily(
         reset_warnings,
