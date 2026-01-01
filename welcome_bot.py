@@ -28,6 +28,20 @@ GROUP_CHAT_ID = None
 # Admin “di fatto” (chiunque scriva almeno un messaggio)
 ADMIN_IDS = set()
 
+# =====================================================
+# AMMONIZIONI AUTOMATICHE
+# =====================================================
+
+TRIGGER_WORDS = {
+    "Crauti": "💸",
+    "Strudel": "⚽",
+}
+
+# { user_id: count }
+WARNINGS_TODAY = {}
+
+MAX_WARNINGS = 3
+
 
 # =====================================================
 # MESSAGGIO DI BENVENUTO
@@ -162,6 +176,17 @@ def get_next_joke():
     return taccagno_queue.pop(0)
 
 
+WARNING_MESSAGES = {
+    1: "⚠️ {name}, prima ammonizione! Qui si parla troppo di {word}.",
+    2: "⚠️⚠️ {name}, seconda ammonizione!\nLa parola *{word}* consuma più di una luce accesa.",
+    3: "🚨 {name}, TERZA ammonizione!\nAncora *{word}* e ti mandiamo a spegnere le luci dello stadio."
+}
+
+MAX_WARNING_MESSAGE = (
+    "🟥 {name} ha superato il limite giornaliero di ammonizioni.\n"
+    "Silenzio stampa fino a mezzanotte 😌"
+)
+
 # =====================================================
 # HANDLER EVENTI
 # =====================================================
@@ -190,6 +215,40 @@ async def capture_chat_and_admin(update: Update, context: ContextTypes.DEFAULT_T
 
     if update.effective_user:
         ADMIN_IDS.add(update.effective_user.id)
+
+async def word_watchdog(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not update.message or not update.message.text:
+        return
+
+    text = update.message.text.lower()
+    user = update.effective_user
+    chat_id = update.effective_chat.id
+
+    for word, emoji in TRIGGER_WORDS.items():
+        if word in text:
+            user_id = user.id
+            WARNINGS_TODAY[user_id] = WARNINGS_TODAY.get(user_id, 0) + 1
+            count = WARNINGS_TODAY[user_id]
+
+            if count <= MAX_WARNINGS:
+                msg = WARNING_MESSAGES[count].format(
+                    name=user.first_name,
+                    word=word
+                )
+            else:
+                msg = MAX_WARNING_MESSAGE.format(
+                    name=user.first_name
+                )
+
+            await context.bot.send_message(
+                chat_id=chat_id,
+                text=f"{emoji} {msg}"
+            )
+            break  # una sola ammonizione per messaggio
+
+async def reset_warnings(context: ContextTypes.DEFAULT_TYPE):
+    WARNINGS_TODAY.clear()
+
 
 
 # =====================================================
@@ -289,5 +348,18 @@ def get_application():
             tzinfo=TIMEZONE
         )
     )
+
+# Reset ammonizioni a mezzanotte
+app.job_queue.run_daily(
+    reset_warnings,
+    time=time(hour=0, minute=0, tzinfo=TIMEZONE)
+)
+
+    # Watchdog parole
+app.add_handler(
+    MessageHandler(filters.TEXT & ~filters.COMMAND, word_watchdog),
+    group=2
+)
+
 
     return app
