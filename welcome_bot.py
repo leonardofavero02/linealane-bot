@@ -33,8 +33,12 @@ ADMIN_IDS = set()
 # =====================================================
 
 TRIGGER_WORDS = {
-    "Crauti": "💸",
-    "Strudel": "⚽",
+    "crauti": "💸",
+    "strudel": "⚽",
+    "puttana": "⚽",
+    "coglione": "⚽",
+    "merda": "⚽",
+
 }
 
 # { user_id: count }
@@ -312,34 +316,25 @@ async def lucitest_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def get_application():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # Welcome nuovi membri
+    app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome))
+    app.add_handler(MessageHandler(filters.ALL, capture_chat_and_admin), group=1)
+
+    app.add_handler(CommandHandler("taccagno", taccagno_command))
+    app.add_handler(CommandHandler("lucitest", lucitest_command))
+
+    # Watchdog ammonizioni
     app.add_handler(
-        MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome)
+        MessageHandler(filters.TEXT & ~filters.COMMAND, word_watchdog),
+        group=2
     )
 
-    # Cattura chat ID + admin
-    app.add_handler(
-        MessageHandler(filters.ALL, capture_chat_and_admin),
-        group=1
-    )
-
-    # Comando /taccagno
-    app.add_handler(
-        CommandHandler("taccagno", taccagno_command)
-    )
-
-     # 👉 QUI: comando di test luci
-    app.add_handler(
-        CommandHandler("lucitest", lucitest_command)
-    )
-    
-    # Messaggio luci ore 23:00
+    # Job luci
     app.job_queue.run_daily(
         luci_off,
         time=time(hour=23, minute=0, tzinfo=TIMEZONE)
     )
 
-    # Battuta giornaliera random
+    # Battuta
     app.job_queue.run_daily(
         taccagno_daily,
         time=time(
@@ -349,17 +344,10 @@ def get_application():
         )
     )
 
-# Reset ammonizioni a mezzanotte
-app.job_queue.run_daily(
-    reset_warnings,
-    time=time(hour=0, minute=0, tzinfo=TIMEZONE)
-)
-
-    # Watchdog parole
-app.add_handler(
-    MessageHandler(filters.TEXT & ~filters.COMMAND, word_watchdog),
-    group=2
-)
-
+    # Reset ammonizioni
+    app.job_queue.run_daily(
+        reset_warnings,
+        time=time(hour=0, minute=0, tzinfo=TIMEZONE)
+    )
 
     return app
