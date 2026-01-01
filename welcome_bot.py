@@ -8,13 +8,13 @@ from telegram.ext import (
     ApplicationBuilder,
     MessageHandler,
     CommandHandler,
-    filters,
-    ContextTypes
+    ContextTypes,
+    filters
 )
 
-# =====================
-# CONFIG
-# =====================
+# =====================================================
+# CONFIGURAZIONE GENERALE
+# =====================================================
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
@@ -22,8 +22,16 @@ if not BOT_TOKEN:
 
 TIMEZONE = pytz.timezone("Europe/Rome")
 
+# ID del gruppo (viene scoperto automaticamente)
 GROUP_CHAT_ID = None
-ADMIN_IDS = set()  # verranno popolati automaticamente
+
+# Admin “di fatto” (chiunque scriva almeno un messaggio)
+ADMIN_IDS = set()
+
+
+# =====================================================
+# MESSAGGIO DI BENVENUTO
+# =====================================================
 
 WELCOME_MESSAGE = (
     "‼️💬 Benvenuto/a {first_name} nel gruppo Linea Lane!\n\n"
@@ -34,13 +42,56 @@ WELCOME_MESSAGE = (
     "YouTube: <a href=\"https://www.youtube.com/@linealane\">YouTube</a>\n"
     "Facebook: <a href=\"https://www.facebook.com/DirettaLineaLane\">Diretta Linea Lane</a>\n\n"
     "🌍 Expat Lane:\n"
-    "Vivi fuori dal Veneto? "
+    "Vivi fuori dal Veneto?\n"
     "<a href=\"https://padlet.com/direttalinealane/expat-lane-acqlsf00zgd4grfg\">"
-    "Iscriviti a Expat Lane e non sentirti più solo!</a>\n\n"
+    "Iscriviti a Expat Lane</a>\n\n"
     "⚪🔴 Partecipa con rispetto.\n"
-    "Ricorda che sei parte della nostra community!"
+    "Sei parte della nostra community!"
 )
 
+
+# =====================================================
+# MESSAGGI LUCI – ORE 23:00
+# =====================================================
+
+LUCI_MESSAGES_MASTER = [
+    "💡⏰ Sono le 23:00!\nSpegnete le luci che consumano 🔌\nOgni watt risparmiato è un passo verso il mercato ⚽💸",
+
+    "💡⏰ 23:00 precise.\nLuci spente, sogni accesi ✨\nSe consumiamo meno, a gennaio arriva qualcuno 😏⚽",
+
+    "💡⏰ È scattata l’ora.\nSpegnete tutto: luce, frigo, illusioni 💡🧊\nIl bilancio ringrazia 📊",
+
+    "💡⏰ 23:00.\nChiudere luci.\nRisparmiare energia.\nPensare al mercato.",
+
+    "💡⏰ Ore 23:00.\nSacrificio anche fuori dal campo ❄️\nLuci spente = spirito Lane acceso 🔴⚪",
+
+    "💡⏰ 23:00!\nSpegnete le luci che costano più di un cartellino 😬\nGrazie per la collaborazione 💸⚽",
+
+    "💡⏰ 23:00 – Comunicazione ufficiale\nRidurre consumi immediatamente 🔌\nObiettivo: sostenibilità… e mercato 📉⚽",
+
+    "💡⏰ È ora.\nLuce spenta oggi,\nesterno in più domani 😌⚽",
+
+    "💡⏰ 23:00!\nPiccoli gesti, grande Lane 🔴⚪\nSpegni la luce, accendi il futuro ⚽✨",
+
+    "💡⏰ 23:00.\nSpegnete le luci.\nIl mercato vi guarda 👀💸⚽",
+
+    "💡⏰ È tardi.\nFate come me. Appena finisce la partita, vado personalmente a spegnere le luci dello stadio.\nUn watt risparmiato al giorno toglie il rosso in bilancio di torno 💸📉"
+]
+
+luci_queue = []
+
+
+def get_next_luci_message():
+    global luci_queue
+    if not luci_queue:
+        luci_queue = LUCI_MESSAGES_MASTER.copy()
+        random.shuffle(luci_queue)
+    return luci_queue.pop(0)
+
+
+# =====================================================
+# BATTUTE TACCAGNO – LISTA COMPLETA
+# =====================================================
 
 TACCAGNO_JOKES_MASTER = [
     "🧊💸 Controllate i frighi stanotte: se consumano troppo, a gennaio arriva solo il terzino in prestito… senza riscatto.",
@@ -100,26 +151,20 @@ TACCAGNO_JOKES_MASTER = [
     "🔦😬 Allenamento serale: più ombre che luci, ma conti in ordine."
 ]
 
-
-# Copia di lavoro (rotazione senza ripetizioni)
 taccagno_queue = []
 
-# =====================
-# HELPERS
-# =====================
 
 def get_next_joke():
     global taccagno_queue
-
     if not taccagno_queue:
         taccagno_queue = TACCAGNO_JOKES_MASTER.copy()
         random.shuffle(taccagno_queue)
-
     return taccagno_queue.pop(0)
 
-# =====================
-# HANDLERS
-# =====================
+
+# =====================================================
+# HANDLER EVENTI
+# =====================================================
 
 async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message and update.message.new_chat_members:
@@ -133,103 +178,98 @@ async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 disable_web_page_preview=True
             )
 
-async def capture_chat_and_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    global GROUP_CHAT_ID
 
+async def capture_chat_and_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Serve a:
+    - memorizzare l'ID del gruppo
+    - rendere admin chi scrive almeno un messaggio
+    """
+    global GROUP_CHAT_ID
     GROUP_CHAT_ID = update.effective_chat.id
 
     if update.effective_user:
         ADMIN_IDS.add(update.effective_user.id)
 
+
+# =====================================================
+# JOB SCHEDULATI
+# =====================================================
+
 async def luci_off(context: ContextTypes.DEFAULT_TYPE):
     if GROUP_CHAT_ID is None:
         return
 
-    message = get_next_luci_message()
-
     await context.bot.send_message(
         chat_id=GROUP_CHAT_ID,
-        text=message,
-        parse_mode="HTML"
+        text=get_next_luci_message()
     )
-
-LUCI_MESSAGES_MASTER = [
-    "💡⏰ Sono le 23:00!\nSpegnete le luci che consumano 🔌\nOgni watt risparmiato è un passo verso il mercato ⚽💸",
-
-    "💡⏰ 23:00 precise.\nLuci spente, sogni accesi ✨\nSe consumiamo meno, a gennaio arriva qualcuno 😏⚽",
-
-    "💡⏰ È scattata l’ora.\nSpegnete tutto: luce, frigo, illusioni 💡🧊\nIl bilancio ringrazia 📊",
-
-    "💡⏰ 23:00.\nChiudere luci.\nRisparmiare energia.\nPensare al mercato.",
-
-    "💡⏰ Ore 23:00.\nSacrificio anche fuori dal campo ❄️\nLuci spente = spirito Lane acceso 🔴⚪",
-
-    "💡⏰ 23:00!\nSpegnete le luci che costano più di un cartellino 😬\nGrazie per la collaborazione 💸⚽",
-
-    "💡⏰ 23:00 – Comunicazione ufficiale\nRidurre consumi immediatamente 🔌\nObiettivo: sostenibilità… e mercato 📉⚽",
-
-    "💡⏰ È ora.\nLuce spenta oggi,\nesterno in più domani 😌⚽",
-
-    "💡⏰ 23:00!\nPiccoli gesti, grande Lane 🔴⚪\nSpegni la luce, accendi il futuro ⚽✨",
-
-    "💡⏰ 23:00.\nSpegnete le luci.\nIl mercato vi guarda 👀💸⚽",
-
-    "💡⏰ È tardi.\nFate come me. Appena finisce la partita, vado personalmente a spegnere le luci dello stadio.\nUn watt risparmiato al giorno toglie il rosso in bilancio di torno 💸📉"
-]
-
-
-luci_queue = []
-
-
-def get_next_luci_message():
-    global luci_queue
-
-    if not luci_queue:
-        luci_queue = LUCI_MESSAGES_MASTER.copy()
-        random.shuffle(luci_queue)
-
-    return luci_queue.pop(0)
-
 
 
 async def taccagno_daily(context: ContextTypes.DEFAULT_TYPE):
     if GROUP_CHAT_ID is None:
         return
 
-    joke = get_next_joke()
-    await context.bot.send_message(chat_id=GROUP_CHAT_ID, text=joke)
+    await context.bot.send_message(
+        chat_id=GROUP_CHAT_ID,
+        text=get_next_joke()
+    )
+
+
+# =====================================================
+# COMANDI MANUALI
+# =====================================================
 
 async def taccagno_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Comando manuale: /taccagno
+    """
     if update.effective_user.id not in ADMIN_IDS:
         return
 
-    joke = get_next_joke()
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=joke)
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=get_next_joke()
+    )
 
-# =====================
+
+# =====================================================
 # APP FACTORY
-# =====================
+# =====================================================
 
 def get_application():
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    app.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome))
-    app.add_handler(MessageHandler(filters.ALL, capture_chat_and_admin), group=1)
-    app.add_handler(CommandHandler("taccagno", taccagno_command))
+    # Welcome nuovi membri
+    app.add_handler(
+        MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, welcome)
+    )
 
-    # Messaggio fisso 23:00
+    # Cattura chat ID + admin
+    app.add_handler(
+        MessageHandler(filters.ALL, capture_chat_and_admin),
+        group=1
+    )
+
+    # Comando /taccagno
+    app.add_handler(
+        CommandHandler("taccagno", taccagno_command)
+    )
+
+    # Messaggio luci ore 23:00
     app.job_queue.run_daily(
         luci_off,
         time=time(hour=23, minute=0, tzinfo=TIMEZONE)
     )
 
-    # Battuta random giornaliera
-    hour = random.randint(10, 21)
-    minute = random.randint(0, 59)
-
+    # Battuta giornaliera random
     app.job_queue.run_daily(
         taccagno_daily,
-        time=time(hour=hour, minute=minute, tzinfo=TIMEZONE)
+        time=time(
+            hour=random.randint(10, 21),
+            minute=random.randint(0, 59),
+            tzinfo=TIMEZONE
+        )
     )
 
     return app
