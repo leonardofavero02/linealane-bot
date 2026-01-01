@@ -32,20 +32,31 @@ ADMIN_IDS = set()
 # AMMONIZIONI AUTOMATICHE
 # =====================================================
 
+# parole trigger (case-insensitive)
 TRIGGER_WORDS = {
     "crauti": "💸",
     "strudel": "⚽",
     "puttana": "⚽",
     "coglione": "⚽",
     "merda": "⚽",
-
 }
 
+# contatore ammonizioni giornaliere
 # { user_id: count }
 WARNINGS_TODAY = {}
 
 MAX_WARNINGS = 3
 
+WARNING_MESSAGES = {
+    1: "⚠️ {name}, prima ammonizione! Qui si parla troppo di {word}.",
+    2: "⚠️⚠️ {name}, seconda ammonizione!\nLa parola *{word}* consuma più di una luce accesa.",
+    3: "🚨 {name}, TERZA ammonizione!\nAncora *{word}* e ti mandiamo a spegnere le luci dello stadio."
+}
+
+MAX_WARNING_MESSAGE = (
+    "🟥 {name} ha superato il limite giornaliero di ammonizioni.\n"
+    "Silenzio stampa fino a mezzanotte 😌"
+)
 
 # =====================================================
 # MESSAGGIO DI BENVENUTO
@@ -66,7 +77,6 @@ WELCOME_MESSAGE = (
     "⚪🔴 Partecipa con rispetto.\n"
     "Sei parte della nostra community!"
 )
-
 
 # =====================================================
 # MESSAGGI LUCI – ORE 23:00
@@ -96,8 +106,8 @@ LUCI_MESSAGES_MASTER = [
     "💡⏰ È tardi.\nFate come me. Appena finisce la partita, vado personalmente a spegnere le luci dello stadio.\nUn watt risparmiato al giorno toglie il rosso in bilancio di torno 💸📉"
 ]
 
-luci_queue = []
 
+luci_queue = []
 
 def get_next_luci_message():
     global luci_queue
@@ -106,9 +116,8 @@ def get_next_luci_message():
         random.shuffle(luci_queue)
     return luci_queue.pop(0)
 
-
 # =====================================================
-# BATTUTE TACCAGNO – LISTA COMPLETA
+# BATTUTE TACCAGNO
 # =====================================================
 
 TACCAGNO_JOKES_MASTER = [
@@ -171,25 +180,12 @@ TACCAGNO_JOKES_MASTER = [
 
 taccagno_queue = []
 
-
 def get_next_joke():
     global taccagno_queue
     if not taccagno_queue:
         taccagno_queue = TACCAGNO_JOKES_MASTER.copy()
         random.shuffle(taccagno_queue)
     return taccagno_queue.pop(0)
-
-
-WARNING_MESSAGES = {
-    1: "⚠️ {name}, prima ammonizione! Qui si parla troppo di {word}.",
-    2: "⚠️⚠️ {name}, seconda ammonizione!\nLa parola *{word}* consuma più di una luce accesa.",
-    3: "🚨 {name}, TERZA ammonizione!\nAncora *{word}* e ti mandiamo a spegnere le luci dello stadio."
-}
-
-MAX_WARNING_MESSAGE = (
-    "🟥 {name} ha superato il limite giornaliero di ammonizioni.\n"
-    "Silenzio stampa fino a mezzanotte 😌"
-)
 
 # =====================================================
 # HANDLER EVENTI
@@ -207,13 +203,7 @@ async def welcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 disable_web_page_preview=True
             )
 
-
 async def capture_chat_and_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Serve a:
-    - memorizzare l'ID del gruppo
-    - rendere admin chi scrive almeno un messaggio
-    """
     global GROUP_CHAT_ID
     GROUP_CHAT_ID = update.effective_chat.id
 
@@ -240,20 +230,17 @@ async def word_watchdog(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     word=word
                 )
             else:
-                msg = MAX_WARNING_MESSAGE.format(
-                    name=user.first_name
-                )
+                msg = MAX_WARNING_MESSAGE.format(name=user.first_name)
 
             await context.bot.send_message(
                 chat_id=chat_id,
-                text=f"{emoji} {msg}"
+                text=f"{emoji} {msg}",
+                parse_mode="Markdown"
             )
-            break  # una sola ammonizione per messaggio
+            break
 
 async def reset_warnings(context: ContextTypes.DEFAULT_TYPE):
     WARNINGS_TODAY.clear()
-
-
 
 # =====================================================
 # JOB SCHEDULATI
@@ -262,52 +249,38 @@ async def reset_warnings(context: ContextTypes.DEFAULT_TYPE):
 async def luci_off(context: ContextTypes.DEFAULT_TYPE):
     if GROUP_CHAT_ID is None:
         return
-
     await context.bot.send_message(
         chat_id=GROUP_CHAT_ID,
         text=get_next_luci_message()
     )
 
-
 async def taccagno_daily(context: ContextTypes.DEFAULT_TYPE):
     if GROUP_CHAT_ID is None:
         return
-
     await context.bot.send_message(
         chat_id=GROUP_CHAT_ID,
         text=get_next_joke()
     )
-
 
 # =====================================================
 # COMANDI MANUALI
 # =====================================================
 
 async def taccagno_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Comando manuale: /taccagno
-    """
     if update.effective_user.id not in ADMIN_IDS:
         return
-
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=get_next_joke()
     )
 
-
 async def lucitest_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """
-    Comando manuale di TEST per le luci
-    """
     if update.effective_user.id not in ADMIN_IDS:
         return
-
     await context.bot.send_message(
         chat_id=update.effective_chat.id,
         text=get_next_luci_message()
     )
-
 
 # =====================================================
 # APP FACTORY
@@ -322,32 +295,28 @@ def get_application():
     app.add_handler(CommandHandler("taccagno", taccagno_command))
     app.add_handler(CommandHandler("lucitest", lucitest_command))
 
-    # Watchdog ammonizioni
     app.add_handler(
         MessageHandler(filters.TEXT & ~filters.COMMAND, word_watchdog),
         group=2
     )
 
-    # Job luci
     app.job_queue.run_daily(
         luci_off,
         time=time(hour=23, minute=0, tzinfo=TIMEZONE)
     )
 
-    # Battuta
     app.job_queue.run_daily(
         taccagno_daily,
         time=time(
             hour=random.randint(10, 21),
             minute=random.randint(0, 59),
             tzinfo=TIMEZONE
+        )
     )
 
-    # Reset ammonizioni
     app.job_queue.run_daily(
         reset_warnings,
         time=time(hour=0, minute=0, tzinfo=TIMEZONE)
     )
 
-             )
     return app
