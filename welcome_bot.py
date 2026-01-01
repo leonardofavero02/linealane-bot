@@ -153,6 +153,34 @@ async def luci_off(context: ContextTypes.DEFAULT_TYPE):
         parse_mode="HTML"
     )
 
+LUCI_MESSAGES_MASTER = [
+    "💡⏰ Sono le 23:00!\nSpegnete le luci che consumano 🔌\nOgni watt risparmiato è un passo verso il mercato ⚽💸",
+
+    "💡⏰ 23:00 precise.\nLuci spente, sogni accesi ✨\nSe consumiamo meno, a gennaio arriva qualcuno 😏⚽",
+
+    "💡⏰ È scattata l’ora.\nSpegnete tutto: luce, frigo, illusioni 💡🧊\nIl bilancio ringrazia 📊",
+
+    "💡⏰ 23:00.\nChiudere luci.\nRisparmiare energia.\nPensare al mercato.",
+
+    "💡⏰ Ore 23:00.\nSacrificio anche fuori dal campo ❄️\nLuci spente = spirito Lane acceso 🔴⚪",
+
+    "💡⏰ 23:00!\nSpegnete le luci che costano più di un cartellino 😬\nGrazie per la collaborazione 💸⚽",
+
+    "💡⏰ 23:00 – Comunicazione ufficiale\nRidurre consumi immediatamente 🔌\nObiettivo: sostenibilità… e mercato 📉⚽",
+
+    "💡⏰ È ora.\nLuce spenta oggi,\nesterno in più domani 😌⚽",
+
+    "💡⏰ 23:00!\nPiccoli gesti, grande Lane 🔴⚪\nSpegni la luce, accendi il futuro ⚽✨",
+
+    "💡⏰ 23:00.\nSpegnete le luci.\nIl mercato vi guarda 👀💸⚽",
+
+    "💡⏰ È tardi.\nFate come me. Appena finisce la partita, vado personalmente a spegnere le luci dello stadio.\nUn watt risparmiato al giorno toglie il rosso in bilancio di torno 💸📉"
+]
+
+
+luci_queue = []
+
+
 def get_next_luci_message():
     global luci_queue
 
@@ -162,30 +190,6 @@ def get_next_luci_message():
 
     return luci_queue.pop(0)
 
-
-LUCI_MESSAGES_MASTER = [
-    "💡⏰ <b>Sono le 23:00!</b>\nSpegnete le luci che consumano 🔌\nOgni watt risparmiato è un passo verso il mercato ⚽💸",
-
-    "💡⏰ <b>23:00 precise.</b>\nLuci spente, sogni accesi ✨\nSe consumiamo meno, a gennaio arriva qualcuno 😏⚽",
-
-    "💡⏰ <b>È scattata l’ora.</b>\nSpegnete tutto: luce, frigo, illusioni 💡🧊\nIl bilancio ringrazia 📊",
-
-    "💡⏰ <b>23:00.</b>\nChiudere luci.\nRisparmiare energia.\nPensare al mercato.",
-
-    "💡⏰ <b>Ore 23:00.</b>\nSacrificio anche fuori dal campo ❄️\nLuci spente = spirito Lane acceso 🔴⚪",
-
-    "💡⏰ <b>23:00!</b>\nSpegnete le luci che costano più di un cartellino 😬\nGrazie per la collaborazione 💸⚽",
-
-    "💡⏰ <b>23:00 – Comunicazione ufficiale</b>\nRidurre consumi immediatamente 🔌\nObiettivo: sostenibilità… e mercato 📉⚽",
-
-    "💡⏰ <b>È ora.</b>\nLuce spenta oggi,\nesterno in più domani 😌⚽",
-
-    "💡⏰ <b>23:00!</b>\nPiccoli gesti, grande Lane 🔴⚪\nSpegni la luce, accendi il futuro ⚽✨",
-
-    "💡⏰ <b>23:00.</b>\nSpegnete le luci.\nIl mercato vi guarda 👀💸⚽"
-]
-
-luci_queue = []
 
 
 async def taccagno_daily(context: ContextTypes.DEFAULT_TYPE):
