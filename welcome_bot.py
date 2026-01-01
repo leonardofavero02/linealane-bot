@@ -341,7 +341,6 @@ def get_application():
             hour=random.randint(10, 21),
             minute=random.randint(0, 59),
             tzinfo=TIMEZONE
-        )
     )
 
     # Reset ammonizioni
@@ -350,4 +349,5 @@ def get_application():
         time=time(hour=0, minute=0, tzinfo=TIMEZONE)
     )
 
+             )
     return app
