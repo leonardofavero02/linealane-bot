@@ -31,17 +31,23 @@ WELCOME_MESSAGE = (
     "<a href=\"https://telegra.ph/Reg-Community-08-29\">Regole della Community</a>\n\n"
     "🌐 Social:\n"
     "Instagram: <a href=\"https://www.instagram.com/linea_lane/\">Instagram</a>\n"
-    "YouTube: <a href=\"https://www.youtube.com/@linealane\">YouTube</a>\n\n"
+    "YouTube: <a href=\"https://www.youtube.com/@linealane\">YouTube</a>\n"
+    "Facebook: <a href=\"https://www.facebook.com/DirettaLineaLane\">Diretta Linea Lane</a>\n\n"
+    "🌍 Expat Lane:\n"
+    "Vivi fuori dal Veneto? "
+    "<a href=\"https://padlet.com/direttalinealane/expat-lane-acqlsf00zgd4grfg\">"
+    "Iscriviti a Expat Lane e non sentirti più solo!</a>\n\n"
     "⚪🔴 Partecipa con rispetto.\n"
     "Ricorda che sei parte della nostra community!"
 )
+
 
 TACCAGNO_JOKES_MASTER = [
     "🧊💸 Controllate i frighi stanotte: se consumano troppo, a gennaio arriva solo il terzino in prestito… senza riscatto.",
     "❄️📉 Ho abbassato il termostato di mezzo grado: così risparmiamo abbastanza per un cartellino… forse.",
     "⚡🏃‍♂️ Se il frigo consuma come Nicola Rauti che corre dietro al pallone, qui non arriva luce fino a fine stagione.",
     "💡⏱️ Chi lascia le luci accese paga in minuti extra… così David Stückler farà più pressing… gratis.",
-    "❄️🏔️ Allenamento al gelo: Carraro, Cavion e Zonta lo chiamano ‘preparazione in stile alpino’.",
+    "❄️🏔️ Allenamento al gelo: Carraro, Cavion e Zonta lo chiamano “preparazione in stile alpino”.",
     "📶🚫 Ho spento il Wi-Fi: se Filippo Alessio vuole segnare, che lo faccia col cuore, non con i meme.",
     "🚿❄️ Docce fredde! I ragazzi direbbero che è tattica di Gallo… ma è solo per risparmiare bollette.",
     "😬💡 Se cade la corrente, Leverbe e Cuomo dovranno illuminare il campo coi loro sorrisi.",
@@ -51,8 +57,49 @@ TACCAGNO_JOKES_MASTER = [
     "🧊🏃‍♂️ Budget per riscaldamento = 0. Vitale e Tribuzzi? Si scaldano correndo… e basta.",
     "🔌🏟️ Se il Vicenza vuole un nuovo attaccante, prima spegniamo tutte le luci… anche quelle dello stadio.",
     "📊💸 Fabio Gallo ha detto sì alla corrente ridotta… ma solo dopo che Zamuner ha pagato la bolletta.",
-    "😴🧊 Se Massolo resta sveglio stanotte, è solo per controllare se il frigo è ancora acceso."
+    "😴🧊 Se Massolo resta sveglio stanotte, è solo per controllare se il frigo è ancora acceso.",
+    "💡👔 Renzo Rosso è passato in sede e ha spento tutto: “Design minimal, budget rispettato”.",
+    "📉💸 Stefano Rosso ha visto la bolletta e ha detto che così il terzino destro può aspettare febbraio.",
+    "❄️🏃‍♂️ Cavion ha chiesto il riscaldamento: risposta del DS? “Scaldati correndo”.",
+    "🔌😅 Renzo Rosso ha spento una luce e ha detto: “Ecco il bonus mercato”.",
+    "🚿❄️ Docce fredde anche oggi: Stefano Rosso le chiama “sostenibilità applicata”.",
+    "💡📋 Chi lascia una luce accesa fa allenamento extra con Cester che prende nota.",
+    "⚡😬 Se salta la corrente, Leverbe e Cuomo tengono la linea… anche al buio.",
+    "🧊👟 Frigo spento: Pellizzari ha capito che le scarpe si lavano solo a fine mese.",
+    "🕯️⚽ Allenamento serale a lume di candela: Morra dice che così vede meglio la porta.",
+    "📶🚫 Wi-Fi spento: Filippo Alessio protesta, il DS risponde “usa l’istinto”.",
+    "❄️🏔️ Preparazione così dura che Vitale dice di essersi scaldato solo al novantesimo.",
+    "💸🏟️ Stefano Rosso ha detto che se vogliamo un attaccante nuovo, prima spegniamo le luci dello stadio.",
+    "🔌⚽ Renzo Rosso ha chiesto pressing alto… ma consumi bassissimi.",
+    "🧊🏃‍♂️ Tribuzzi corre così tanto che il riscaldamento è diventato superfluo.",
+    "💡😴 Massolo controlla il frigo come se fosse una porta da difendere.",
+    "📊💸 Zamuner ha fatto i conti: una lampadina spenta vale mezzo cross in più.",
+    "❄️⚽ Gallo parla di sacrificio, il termosifone resta spento per coerenza.",
+    "🧊📉 Il DS ha abbassato il termostato: “Così respiriamo aria da playoff sostenibili”.",
+    "🔦😬 Allenamento al buio: Carraro dice che migliora la visione di gioco.",
+    "💡🏃‍♂️ Chi dimentica una luce accesa fa ripetute con Cavion fino a scaldarsi.",
+    "❄️⚽ Zonta ha chiesto se arriva il riscaldamento: risposta “solo se segni”.",
+    "📶❌ Internet spento in spogliatoio: Stefano Rosso dice che aumenta la concentrazione.",
+    "🧊😅 Se il frigo resta acceso tutta la notte, Renzo Rosso manda il conto al mercato di gennaio.",
+    "💡📋 Cester ha segnato sul tabellino: “Luce spenta, allenamento guadagnato”.",
+    "❄️🏃‍♂️ Vitale dice che fa freddo, il DS risponde: “Corri più forte”.",
+    "🔌⚽ Se cade la corrente, si gioca lo stesso: mentalità Lane.",
+    "💸😬 Stefano Rosso ha sorriso vedendo la bolletta: “Ottimo, niente esterni nuovi”.",
+    "🧊⚽ Morra a lume di candela dice che così sente meglio la porta.",
+    "📉💡 Risparmio energetico così serio che anche il VAR è in modalità eco.",
+    "❄️🏔️ Allenamento alpino approvato da Renzo Rosso: “È lifestyle”.",
+    "🔦⚽ Luci spente in palestra: Gallo dice che è lavoro sulla percezione.",
+    "💡🏃‍♂️ Se qualcuno accende una luce, Vitale parte in progressione per spegnerla.",
+    "🧊📊 Il DS dice che il bilancio sta meglio… il frigo un po’ meno.",
+    "❄️😴 Massolo dorme con una coperta in più: sacrificio per il mercato.",
+    "🔌💸 Stefano Rosso ha detto che ogni watt risparmiato è un passo verso i playoff.",
+    "🧊⚽ Se il Vicenza segna al novantesimo, è perché le luci erano spente prima.",
+    "💡😅 Renzo Rosso passa in sede e spegne tutto: “Design pulito”.",
+    "❄️🏃‍♂️ Chi si lamenta del freddo fa scatti con Tribuzzi fino a scaldarsi.",
+    "📉⚽ Risparmio così serio che anche i palloni vengono gonfiati a metà.",
+    "🔦😬 Allenamento serale: più ombre che luci, ma conti in ordine."
 ]
+
 
 # Copia di lavoro (rotazione senza ripetizioni)
 taccagno_queue = []
@@ -98,15 +145,48 @@ async def luci_off(context: ContextTypes.DEFAULT_TYPE):
     if GROUP_CHAT_ID is None:
         return
 
+    message = get_next_luci_message()
+
     await context.bot.send_message(
         chat_id=GROUP_CHAT_ID,
-        text=(
-            "💡⏰ **Sono le 23:00!**\n"
-            "Spegnete le luci che consumano!\n\n"
-            "💸⚽ Altrimenti l’esterno e il difensore a gennaio **non arrivano** 😤"
-        ),
+        text=message,
         parse_mode="HTML"
     )
+
+def get_next_luci_message():
+    global luci_queue
+
+    if not luci_queue:
+        luci_queue = LUCI_MESSAGES_MASTER.copy()
+        random.shuffle(luci_queue)
+
+    return luci_queue.pop(0)
+
+
+LUCI_MESSAGES_MASTER = [
+    "💡⏰ <b>Sono le 23:00!</b>\nSpegnete le luci che consumano 🔌\nOgni watt risparmiato è un passo verso il mercato ⚽💸",
+
+    "💡⏰ <b>23:00 precise.</b>\nLuci spente, sogni accesi ✨\nSe consumiamo meno, a gennaio arriva qualcuno 😏⚽",
+
+    "💡⏰ <b>È scattata l’ora.</b>\nSpegnete tutto: luce, frigo, illusioni 💡🧊\nIl bilancio ringrazia 📊",
+
+    "💡⏰ <b>23:00.</b>\nChiudere luci.\nRisparmiare energia.\nPensare al mercato.",
+
+    "💡⏰ <b>Ore 23:00.</b>\nSacrificio anche fuori dal campo ❄️\nLuci spente = spirito Lane acceso 🔴⚪",
+
+    "💡⏰ <b>23:00!</b>\nSpegnete le luci che costano più di un cartellino 😬\nGrazie per la collaborazione 💸⚽",
+
+    "💡⏰ <b>23:00 – Comunicazione ufficiale</b>\nRidurre consumi immediatamente 🔌\nObiettivo: sostenibilità… e mercato 📉⚽",
+
+    "💡⏰ <b>È ora.</b>\nLuce spenta oggi,\nesterno in più domani 😌⚽",
+
+    "💡⏰ <b>23:00!</b>\nPiccoli gesti, grande Lane 🔴⚪\nSpegni la luce, accendi il futuro ⚽✨",
+
+    "💡⏰ <b>23:00.</b>\nSpegnete le luci.\nIl mercato vi guarda 👀💸⚽"
+]
+
+luci_queue = []
+
 
 async def taccagno_daily(context: ContextTypes.DEFAULT_TYPE):
     if GROUP_CHAT_ID is None:
