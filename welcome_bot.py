@@ -233,6 +233,19 @@ async def taccagno_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def lucitest_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Comando manuale di TEST per le luci
+    """
+    if update.effective_user.id not in ADMIN_IDS:
+        return
+
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=get_next_luci_message()
+    )
+
+
 # =====================================================
 # APP FACTORY
 # =====================================================
@@ -256,6 +269,11 @@ def get_application():
         CommandHandler("taccagno", taccagno_command)
     )
 
+     # 👉 QUI: comando di test luci
+    app.add_handler(
+        CommandHandler("lucitest", lucitest_command)
+    )
+    
     # Messaggio luci ore 23:00
     app.job_queue.run_daily(
         luci_off,
